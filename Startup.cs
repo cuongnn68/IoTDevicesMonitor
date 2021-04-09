@@ -48,7 +48,6 @@ namespace IoTDevicesMonitor
 
             app.UseRouting();
 
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
