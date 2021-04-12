@@ -41,8 +41,6 @@ namespace IoTDevicesMonitor.Services {
         }
 
         public (bool, string) CreateNewFile(string folder, string fileName, IFormFile file) {
-            // var folderPath = GetPath(folder);
-            // var filePath = GetPath(folder, fileName);
             if(!FoldersFiles.ContainsKey(folder)) {
                 Directory.CreateDirectory(GetPath(folder));
                 FoldersFiles.Add(folder, new HashSet<string>());
@@ -55,6 +53,7 @@ namespace IoTDevicesMonitor.Services {
                 FileMode.Create, 
                 FileAccess.ReadWrite);
             file.CopyTo(stream);
+            FoldersFiles[folder].Add(fileName);
             return (true, "");
         }
 

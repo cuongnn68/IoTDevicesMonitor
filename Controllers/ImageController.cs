@@ -7,6 +7,7 @@ using IoTDevicesMonitor.Model;
 using IoTDevicesMonitor.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Logging;
 
 namespace IoTDevicesMonitor.Controllers
@@ -32,16 +33,17 @@ namespace IoTDevicesMonitor.Controllers
         [HttpGet]
         [Route("folder")]
         public IActionResult GetAllImageFolder() {
-            Console.WriteLine(env.WebRootPath);
-            Console.WriteLine(env.ContentRootPath);
-            IEnumerable<string> folders = fileManager.FoldersFiles.Keys;
+            // Console.WriteLine(env.WebRootPath);
+            // Console.WriteLine(env.ContentRootPath);
+
+            var folders = new FoldersResultModel {Folders = fileManager.FoldersFiles.Keys};
             return Ok(folders);
         }
 
         [HttpPost("image")]
         public IActionResult UploadImage([FromForm] NewFileModel newFile) {
-            var (created, error) = fileManager.CreateNewFile(newFile.Folder, newFile.Name, newFile.File);
-            if(created) return Created($"folders/{newFile.Folder}/image/{newFile.Name}", null);
+            var (canCreated, error) = fileManager.CreateNewFile(newFile.Folder, newFile.Name, newFile.File);
+            if(canCreated) return Created($"folders/{newFile.Folder}/image/{newFile.Name}", null);
             return Conflict(error);
         }
 
@@ -57,12 +59,10 @@ namespace IoTDevicesMonitor.Controllers
         }
 
 
-        // TODO: dowload image with folder and name
+        // DONE: dowload image with folder and name
+        // TODO: image list of folder
         // TODO: signalR
         // TODO: admin add devices
         // TODOL athentication
-
-        
-        
     }
 }
