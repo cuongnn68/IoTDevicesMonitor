@@ -33,9 +33,6 @@ namespace IoTDevicesMonitor.Controllers
         [HttpGet]
         [Route("folder")]
         public IActionResult GetAllImageFolder() {
-            // Console.WriteLine(env.WebRootPath);
-            // Console.WriteLine(env.ContentRootPath);
-
             var folders = new FoldersResultModel {Folders = fileManager.FoldersFiles.Keys};
             return Ok(folders);
         }
@@ -45,6 +42,13 @@ namespace IoTDevicesMonitor.Controllers
             var (canCreated, error) = fileManager.CreateNewFile(newFile.Folder, newFile.Name, newFile.File);
             if(canCreated) return Created($"folders/{newFile.Folder}/image/{newFile.Name}", null);
             return Conflict(error);
+        }
+
+        [HttpGet("folder/{folderName}/image")]
+        public IActionResult GetFolderContent(string folderName) {
+            var exist = fileManager.FoldersFiles.ContainsKey(folderName);
+            if(!exist) return Conflict(new ErrorModel{Error = "Folder not exist"});
+            return Ok(new FolderInfoModel {Files = fileManager.FoldersFiles[folderName]});
         }
 
         [HttpGet("folder/{folderName}/image/{imageName}")]
@@ -58,9 +62,8 @@ namespace IoTDevicesMonitor.Controllers
             return PhysicalFile(fileManager.GetPath(folderName, imageName), "image/*",imageName);
         }
 
-
         // DONE: dowload image with folder and name
-        // TODO: image list of folder
+        // DONE: image list of folder
         // TODO: signalR
         // TODO: admin add devices
         // TODOL athentication
