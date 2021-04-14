@@ -14,7 +14,7 @@ namespace IoTDevicesMonitor.Controllers
 {
     [ApiController]
     [Route("images-api")]
-    public class ImageController : ControllerBase {
+    public class ImageController : Controller {
         private IWebHostEnvironment env;
         private string path;
         private FileManager fileManager;
@@ -65,7 +65,7 @@ namespace IoTDevicesMonitor.Controllers
         // DONE: dowload image with folder and name
         // DONE: image list of folder
         // TODO: signalR
-        // TODO: admin add devices
         // TODOL athentication
+        // TODO: admin add devices
     }
 }

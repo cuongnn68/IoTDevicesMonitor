@@ -33,6 +33,8 @@ namespace IoTDevicesMonitor
             });
 
             services.AddSingleton<FileManager>();
+            services.AddSingleton<DeviceState>();
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -52,6 +54,7 @@ namespace IoTDevicesMonitor
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<SignalrHub>("/realtime");
             });
         }
     }
