@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IoTDevicesMonitor.Data;
 using IoTDevicesMonitor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,14 @@ namespace IoTDevicesMonitor
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "IoTDevicesMonitor", Version = "v1" });
             });
 
-            services.AddSingleton<FileManager>();
+            
+            var uesedDatabase = Configuration.GetValue<bool>("UsedDatabase", false);
+            if(uesedDatabase) {
+                services.AddDbContext<AppDbContext>();
+                services.AddSingleton<IFileManager, FileManagerDatabase>();
+            } else {
+                services.AddSingleton<IFileManager, FileManagerFileSystem>();
+            }
             services.AddSingleton<DeviceState>();
             services.AddSignalR();
         }

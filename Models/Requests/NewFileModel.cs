@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace IoTDevicesMonitor.Model {
+namespace IoTDevicesMonitor.Model.Requests {
     public class NewFileModel {
         [Required]
         public string Name { get; set; }

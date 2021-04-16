@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace IoTDevicesMonitor.Services {
-    public class FileManager {
-        public Dictionary<string, HashSet<string>> FoldersFiles { get; private set; }
+    public class FileManagerFileSystem : IFileManager{
+        private Dictionary<string, HashSet<string>> foldersFiles;
         private IWebHostEnvironment env;
         public string DataPath { get; private set; }
         public string GetPath(string folder, string fileName = "") => Path.Combine(DataPath, folder, fileName);
 
-        public FileManager (IWebHostEnvironment env) {
+        public FileManagerFileSystem (IWebHostEnvironment env) {
             this.env = env;
             DataPath = Path.Combine(env.WebRootPath, "file");
             if(!Directory.Exists(DataPath)) Directory.CreateDirectory(DataPath);
@@ -22,13 +22,13 @@ namespace IoTDevicesMonitor.Services {
 
             // TODO save object to file, and check if file exist to load before create new
             // this working by read 1 folder deep
-            FoldersFiles = new Dictionary<string, HashSet<string>>();
+            foldersFiles = new Dictionary<string, HashSet<string>>();
             var folders = Directory.GetDirectories(DataPath);
             foreach(var folder in folders) {
                 var files = Directory.GetFiles(folder)
                                     .Select(e => e.Replace(folder, null).Replace("\\", null))
                                     .ToHashSet();
-                FoldersFiles.Add(
+                foldersFiles.Add(
                     folder.Replace(DataPath, null).Replace("\\", null), 
                     files);
             }
@@ -39,13 +39,17 @@ namespace IoTDevicesMonitor.Services {
             if (!File.Exists(GetPath(folder, fileName))) return false;
             return true;
         }
+        // TODO compare 2 exist method see what better implement
+        public bool FolderExist(string folder) {
+            return foldersFiles.ContainsKey(folder);
+        }
 
         public (bool, string) CreateNewFile(string folder, string fileName, IFormFile file) {
-            if(!FoldersFiles.ContainsKey(folder)) {
+            if(!foldersFiles.ContainsKey(folder)) {
                 Directory.CreateDirectory(GetPath(folder));
-                FoldersFiles.Add(folder, new HashSet<string>());
+                foldersFiles.Add(folder, new HashSet<string>());
             }
-            if(FoldersFiles[folder].Contains(fileName)) {
+            if(foldersFiles[folder].Contains(fileName)) {
                 return (false, "File already exist");
             }
             using var stream = new FileStream(
@@ -53,7 +57,7 @@ namespace IoTDevicesMonitor.Services {
                 FileMode.Create, 
                 FileAccess.ReadWrite);
             file.CopyTo(stream);
-            FoldersFiles[folder].Add(fileName);
+            foldersFiles[folder].Add(fileName);
             return (true, "");
         }
 
@@ -64,5 +68,16 @@ namespace IoTDevicesMonitor.Services {
                 FileAccess.Read
             );
         }
+
+        public IEnumerable<string> GetFolders() {
+            return foldersFiles.Keys;
+        }
+
+        public IEnumerable<string> GetImagesInFolder(string folderName) {
+            if(!foldersFiles.ContainsKey(folderName)) return new List<string>();
+            return foldersFiles[folderName];
+        }
+
+
     }
 }
