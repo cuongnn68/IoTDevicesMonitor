@@ -7,7 +7,7 @@ namespace IoTDevicesMonitor.Data {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseInMemoryDatabase("Test-only-db");
+            // optionsBuilder.UseInMemoryDatabase("Test-only-db");
             base.OnConfiguring(optionsBuilder);
         }
 
