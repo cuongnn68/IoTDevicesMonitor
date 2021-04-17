@@ -34,10 +34,10 @@ namespace IoTDevicesMonitor
             });
 
             
-            var uesedDatabase = Configuration.GetValue<bool>("UsedDatabase", false);
+            var uesedDatabase = Configuration.GetValue<bool>("UsedDatabase");
             if(uesedDatabase) {
                 services.AddDbContext<AppDbContext>();
-                services.AddSingleton<IFileManager, FileManagerDatabase>();
+                services.AddScoped<IFileManager, FileManagerDatabase>();
             } else {
                 services.AddSingleton<IFileManager, FileManagerFileSystem>();
             }

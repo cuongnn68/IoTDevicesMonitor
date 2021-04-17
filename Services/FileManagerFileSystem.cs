@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IoTDevicesMonitor.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -34,23 +35,23 @@ namespace IoTDevicesMonitor.Services {
             }
         }
 
-        public bool FileExist(string folder, string fileName) {
-            if (!Directory.Exists(GetPath(folder))) return false;
-            if (!File.Exists(GetPath(folder, fileName))) return false;
-            return true;
+        public Task<bool> FileExistAsync(string folder, string fileName) {
+            if (!Directory.Exists(GetPath(folder))) return Task.FromResult(false);
+            if (!File.Exists(GetPath(folder, fileName))) return Task.FromResult(false);
+            return Task.FromResult(true);
         }
         // TODO compare 2 exist method see what better implement
-        public bool FolderExist(string folder) {
-            return foldersFiles.ContainsKey(folder);
+        public Task<bool> FolderExistAsync(string folder) {
+            return Task.FromResult(foldersFiles.ContainsKey(folder));
         }
 
-        public (bool, string) CreateNewFile(string folder, string fileName, IFormFile file) {
+        public Task<(bool, string)> CreateNewFileAsync(string folder, string fileName, IFormFile file) {
             if(!foldersFiles.ContainsKey(folder)) {
                 Directory.CreateDirectory(GetPath(folder));
                 foldersFiles.Add(folder, new HashSet<string>());
             }
             if(foldersFiles[folder].Contains(fileName)) {
-                return (false, "File already exist");
+                return Task.FromResult((false, "File already exist"));
             }
             using var stream = new FileStream(
                 GetPath(folder, fileName),
@@ -58,24 +59,26 @@ namespace IoTDevicesMonitor.Services {
                 FileAccess.ReadWrite);
             file.CopyTo(stream);
             foldersFiles[folder].Add(fileName);
-            return (true, "");
+            return Task.FromResult((true, ""));
         }
 
-        public FileStream GetFile(string folder, string fileName) {
-            return new FileStream(
+        public Task<Stream> GetFileAsync(string folder, string fileName) {
+            return Task.FromResult<Stream>(
+                new FileStream(
                 GetPath(folder, fileName),
                 FileMode.Open,
                 FileAccess.Read
+                )
             );
         }
 
-        public IEnumerable<string> GetFolders() {
-            return foldersFiles.Keys;
+        public Task<IEnumerable<string>> GetFoldersAsync() {
+            return Task.FromResult<IEnumerable<string>>(foldersFiles.Keys);
         }
 
-        public IEnumerable<string> GetImagesInFolder(string folderName) {
-            if(!foldersFiles.ContainsKey(folderName)) return new List<string>();
-            return foldersFiles[folderName];
+        public Task<IEnumerable<string>> GetImagesInFolderAsync(string folderName) {
+            if(!foldersFiles.ContainsKey(folderName)) return Task.FromResult<IEnumerable<string>>(new List<string>());
+            return Task.FromResult<IEnumerable<string>>(foldersFiles[folderName]);
         }
 
 

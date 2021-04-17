@@ -34,32 +34,32 @@ namespace IoTDevicesMonitor.Controllers
 
         [HttpGet]
         [Route("folder")]
-        public IActionResult GetAllImageFolder() {
-            var folders = new {Folders = fileManager.GetFolders()};
+        public async Task<IActionResult> GetAllImageFolder() {
+            var folders = new {Folders = await fileManager.GetFoldersAsync()};
             return Ok(folders);
         }
 
         [HttpPost("image")]
-        public IActionResult UploadImage([FromForm] NewFileModel newFile) {
-            var (canCreated, error) = fileManager.CreateNewFile(newFile.Folder, newFile.Name, newFile.File);
+        public async Task<IActionResult> UploadImage([FromForm] NewFileModel newFile) {
+            var (canCreated, error) = await fileManager.CreateNewFileAsync(newFile.Folder, newFile.Name, newFile.File);
             if(canCreated) return Created($"folders/{newFile.Folder}/image/{newFile.Name}", null);
             return Conflict(new {Error = error});
         }
 
         [HttpGet("folder/{folderName}/image")]
-        public IActionResult GetFolderContent(string folderName) {
-            var exist = fileManager.FolderExist(folderName);
+        public async Task<IActionResult> GetFolderContent(string folderName) {
+            var exist = await fileManager.FolderExistAsync(folderName);
             if(!exist) return Conflict(new ErrorModel{Error = "Folder not exist"});
-            return Ok(new {Files = fileManager.GetImagesInFolder(folderName)});
+            return Ok(new {Files = await fileManager.GetImagesInFolderAsync(folderName)});
         }
 
         [HttpGet("folder/{folderName}/image/{imageName}")]
-        public IActionResult DonwloadImage(string folderName, string imageName) {
-            if(!fileManager.FileExist(folderName, imageName)) {
+        public async Task<IActionResult> DonwloadImage(string folderName, string imageName) {
+            if(! await fileManager.FileExistAsync(folderName, imageName)) {
                 var error = "File not exist";
                 return Conflict(error);
             }
-            var fileStream = fileManager.GetFile(folderName, imageName);
+            var fileStream = await fileManager.GetFileAsync(folderName, imageName);
             return File(fileStream, "image/*",imageName);
             // return PhysicalFile(fileManager.GetPath(folderName, imageName), "image/*",imageName);
         }
