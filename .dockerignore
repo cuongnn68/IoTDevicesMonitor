@@ -1,0 +1,7 @@
+omnisharp.json
+api.http
+
+/.vscode
+/bin||
+/obj
+/wwwroot/file

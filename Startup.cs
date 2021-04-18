@@ -19,12 +19,15 @@ namespace IoTDevicesMonitor
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            this.env = env;
         }
 
         public IConfiguration Configuration { get; }
+
+        private IWebHostEnvironment env;
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -38,7 +41,8 @@ namespace IoTDevicesMonitor
             var uesedDatabase = Configuration.GetValue<bool>("UsedDatabase",false);
             if(uesedDatabase) {
                 services.AddDbContext<AppDbContext>(options => {
-                    options.UseNpgsql(Configuration.GetConnectionString("HerokuPsql"));
+                    // options.UseNpgsql(Configuration.GetConnectionString("HerokuPsql"));
+                    options.UseNpgsql(GetConnectionString());
                 });
                 services.AddScoped<IFileManager, FileManagerDatabase>();
             } else {
@@ -57,7 +61,7 @@ namespace IoTDevicesMonitor
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IoTDevicesMonitor v1"));
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseStaticFiles();
@@ -67,6 +71,20 @@ namespace IoTDevicesMonitor
                 endpoints.MapControllers();
                 endpoints.MapHub<SignalrHub>("/realtime");
             });
+        }
+
+        private string GetConnectionString() {
+            var stringDbUrl = env.IsProduction() 
+                ? Environment.GetEnvironmentVariable("DATABASE_URL") 
+                : Environment.GetEnvironmentVariable("HEROKU_DATABASE_URL");
+            Console.WriteLine(stringDbUrl);
+            var dbUrl = new Uri(stringDbUrl);
+            return $"Host={dbUrl.Host};"
+                + $"Port={dbUrl.Port};"
+                + $"Database={dbUrl.AbsolutePath.Remove(0,1)};"
+                + $"User Id={dbUrl.UserInfo.Split(":")[0]};"
+                + $"Password={dbUrl.UserInfo.Split(":")[1]};"
+                + "Trust Server Certificate=true;SSL Mode=Require;";
         }
     }
 }
