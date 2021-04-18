@@ -21,6 +21,11 @@ namespace IoTDevicesMonitor
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    if(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true") {
+                        var url = "http://*:" + Environment.GetEnvironmentVariable("PORT").Trim('/');
+                        Console.WriteLine(url);
+                        webBuilder.UseUrls(url);
+                    }
                 });
     }
 }

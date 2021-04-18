@@ -2,6 +2,6 @@ omnisharp.json
 api.http
 
 /.vscode
-/bin||
+/bin
 /obj
 /wwwroot/file
