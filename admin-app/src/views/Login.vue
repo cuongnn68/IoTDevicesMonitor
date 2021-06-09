@@ -1,18 +1,23 @@
 <template>
   <div class="top">
     <div class="login-form">
-      <div>Admin acount</div>
-      <input type="text" name="username" >
-      <div>Passowrd</div>
-      <input type="password">
-      <button>Login</button>
+      <h3>Admin</h3>
+      <el-input placeholder="Username" v-model="username" type="text"></el-input>
+      <el-input placeholder="Password" v-model="password" type="password"></el-input>
+      <el-button>Login</el-button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Login"
+  name: "Login",
+  data() {
+    return {
+      username:"",
+      password:"",
+    }
+  }
 }
 </script>
 

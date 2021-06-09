@@ -1,12 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import UserList from '../views/UserList.vue'
+import NewUserInfo from '../views/NewUserInfo.vue'
 
 const routes = [
   {
     path: '/admin-app',
     name: 'Home',
-    component: Home
+    component: Home,
+    alias: '/admin-app/home'
   },
   {
     path: '/admin-app/about',
@@ -20,7 +23,17 @@ const routes = [
     path: '/admin-app/login',
     name: 'Login',
     component: Login,
-  }
+  },
+  {
+    path: '/admin-app/user-list',
+    name: 'UserList',
+    component: UserList,
+  },
+  {
+    path: '/admin-app/new-user',
+    name: 'NewUserInfo',
+    component: NewUserInfo,
+  },
 ] // default 404 not found ...
 
 const router = createRouter({
