@@ -4,6 +4,10 @@
       class="el-menu-vertical"
       @open="handleOpen"
       @close="handleClose">
+      <div class="for-fun">
+        <i class="material-icons" style="font-size: 169px">account_box</i>
+        <h2>ADMIN</h2>
+      </div>
       <el-menu-item index="/admin-app/home" class="option">
         <i class="material-icons option-icon">dashboard</i>
         <span class="option-name">Home</span>
@@ -48,5 +52,9 @@ export default {
 }
 .option-name {
   flex-grow: 2;
+}
+.for-fun {
+  display: flex;
+  flex-direction: column;
 }
 </style>

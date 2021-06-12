@@ -14,6 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.SpaServices.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using IoTDevicesMonitor.Utils;
 
 namespace IoTDevicesMonitor
 {
@@ -50,13 +55,37 @@ namespace IoTDevicesMonitor
             }
             services.AddSingleton<DeviceState>();
             services.AddSignalR();
+            services.AddSpaStaticFiles(options => {
+                options.RootPath = "./admin-app/dist";
+            });
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options => {
+                    SecurityKey key = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(GlobalConstains.TestKey)
+                    );
+                    options.TokenValidationParameters = new TokenValidationParameters{
+                        // TODO ????
+                        ClockSkew = new TimeSpan(0, 0, 1),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = key,
+                        AuthenticationType = "Bearer"
+                    };
+                });
+            services.AddAuthorization(option => {
+                option.AddPolicy("Yomama", option => {
+                    option.RequireClaim("Mama");
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IoTDevicesMonitor v1"));
             }
@@ -64,12 +93,20 @@ namespace IoTDevicesMonitor
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<SignalrHub>("/realtime");
+            });
+            app.UseSpaStaticFiles();
+            app.UseSpa(config => {
+                config.Options.SourcePath = "admin-app/dist";
             });
         }
 

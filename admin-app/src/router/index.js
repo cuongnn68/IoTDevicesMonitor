@@ -39,6 +39,19 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
+
+router.beforeEach((to, from, next) => {
+  // TODO Login
+  let isLogin = true;
+  const privatePage = [
+    "/admin-app/user-list",
+    "/admin-app/new-user",
+  ];
+  if(!isLogin && privatePage.includes(to.path)) {
+    next("/admin-app/login");
+  }
+  next();
+});
 
 export default router
