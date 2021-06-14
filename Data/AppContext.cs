@@ -1,9 +1,11 @@
+using IoTDevicesMonitor.Data.Entities;
 using IoTDevicesMonitor.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace IoTDevicesMonitor.Data {
     public class AppDbContext : DbContext {
         public DbSet<Base64FileEntity> Base64Files { get; set; }
+        public DbSet<AdminAccount> AdminAccount { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

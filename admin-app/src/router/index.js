@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import UserList from '../views/UserList.vue'
 import NewUserInfo from '../views/NewUserInfo.vue'
+import * as myStorage from '../services/storage.js'
 
 const routes = [
   {
@@ -43,13 +44,18 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // TODO Login
-  let isLogin = true;
+  let isLogin = myStorage.getAdmin();
   const privatePage = [
     "/admin-app/user-list",
     "/admin-app/new-user",
   ];
   if(!isLogin && privatePage.includes(to.path)) {
     next("/admin-app/login");
+    return;
+  }
+  if(isLogin && to.path === "/admin-app/login") {
+    next("/admin-app/home");
+    return;
   }
   next();
 });

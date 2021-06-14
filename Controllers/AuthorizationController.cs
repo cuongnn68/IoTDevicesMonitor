@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using IoTDevicesMonitor.Data;
+using IoTDevicesMonitor.Model.Requests;
+using IoTDevicesMonitor.Services;
 using IoTDevicesMonitor.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +16,17 @@ namespace IoTDevicesMonitor.Controllers {
     [ApiController]
     [Route("api/auth")]
     public class AuthorizationController : Controller {
+        AppDbContext dbContext;
+        JwtServices jwtServices;
+
+        public AuthorizationController(
+            AppDbContext dbContext,
+            JwtServices jwtServices
+        ) {
+            this.dbContext = dbContext;
+            this.jwtServices = jwtServices;
+        }
+
         [HttpGet("test1")]
         public IActionResult Test1 () {
             return Ok(new {mess="test1"});
@@ -58,6 +73,22 @@ namespace IoTDevicesMonitor.Controllers {
             var token = handle.CreateJwtSecurityToken(descriptor);
             return Ok(new {token = handle.WriteToken(token)});
         }
+
+        [HttpPost("admin-token")]
+        public IActionResult CreateAdminToken(AdminModel account) {
+            var adminAccount = dbContext.AdminAccount.Where(e => e.Admin == account.Admin).FirstOrDefault();
+            if(adminAccount == null || adminAccount.HPassword != account.Password) {
+                return BadRequest(new {error = "Wrong account or password"});
+            }
+            return Ok(new {adminToken = jwtServices.CreateAdminToken(adminAccount)});    
+        }
+
+        [HttpGet("admin-token/authorization")]
+        [Authorize(Policy = "Admin")]
+        public IActionResult CheckAdminToken() {
+            return Ok();
+        }
+
 
         [HttpPost("token")] // TODO this
         public IActionResult Token(string username, string password) {

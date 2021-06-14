@@ -55,6 +55,8 @@ namespace IoTDevicesMonitor
             }
             services.AddSingleton<DeviceState>();
             services.AddSignalR();
+            services.AddScoped<JwtServices>();
+            
             services.AddSpaStaticFiles(options => {
                 options.RootPath = "./admin-app/dist";
             });
@@ -75,8 +77,20 @@ namespace IoTDevicesMonitor
                     };
                 });
             services.AddAuthorization(option => {
-                option.AddPolicy("Yomama", option => {
-                    option.RequireClaim("Mama");
+                option.AddPolicy("Yomama", builder => {
+                    builder.RequireClaim("Mama");
+                });
+                option.AddPolicy("Admin", builder => {
+                    builder.RequireClaim("admin");
+                });
+            });
+
+            services.AddCors(options => {
+                options.AddPolicy("My CORS", builder => {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                        // .AllowCredentials();
                 });
             });
         }
@@ -93,6 +107,8 @@ namespace IoTDevicesMonitor
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("My CORS");
 
             app.UseAuthentication();
             app.UseAuthorization();
