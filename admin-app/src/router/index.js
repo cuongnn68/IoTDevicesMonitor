@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import UserList from '../views/UserList.vue'
 import NewUserInfo from '../views/NewUserInfo.vue'
 import * as myStorage from '../services/storage.js'
+import UserInfo from '../views/User.vue'
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
     name: 'NewUserInfo',
     component: NewUserInfo,
   },
+  {
+    path: '/admin-app/user/:username',
+    name: 'UserInfo',
+    component: UserInfo,
+  },
 ] // default 404 not found ...
 
 const router = createRouter({
@@ -48,6 +54,7 @@ router.beforeEach((to, from, next) => {
   const privatePage = [
     "/admin-app/user-list",
     "/admin-app/new-user",
+    '/admin-app/user',
   ];
   if(!isLogin && privatePage.includes(to.path)) {
     next("/admin-app/login");

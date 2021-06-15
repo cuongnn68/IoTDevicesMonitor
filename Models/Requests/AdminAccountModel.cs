@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IoTDevicesMonitor.Model.Requests {
+namespace IoTDevicesMonitor.Models.Requests {
     public class AdminModel {
         [Required]
         public string Admin { get; set; }

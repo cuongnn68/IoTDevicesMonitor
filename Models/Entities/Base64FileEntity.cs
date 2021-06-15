@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace IoTDevicesMonitor.Model {
+namespace IoTDevicesMonitor.Models {
     public class Base64FileEntity {
         [Column("test name", TypeName = "varchar(420)", Order = 1), MaxLength(69), JsonPropertyName("json name")]
         [Required]

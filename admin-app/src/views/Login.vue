@@ -32,6 +32,10 @@ export default {
               data => {
                 myStorage.setInfo(this.username, data["adminToken"]);
                 console.log(myStorage.getAdmin());
+                this.$message({
+                    message: 'Logined',
+                    type: 'success'
+                });
                 this.$router.push("/admin-app/user-list");
               }
             )

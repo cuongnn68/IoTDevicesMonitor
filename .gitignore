@@ -1,8 +1,8 @@
 omnisharp.json
 api.http
+loginDatabase.txt
 
 /.vscode
 /bin
 /obj
 /wwwroot/file
-

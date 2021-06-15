@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using IoTDevicesMonitor.Data;
-using IoTDevicesMonitor.Model.Requests;
+using IoTDevicesMonitor.Models.Requests;
 using IoTDevicesMonitor.Services;
 using IoTDevicesMonitor.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -62,7 +62,7 @@ namespace IoTDevicesMonitor.Controllers {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalConstains.TestKey));
             var descriptor = new SecurityTokenDescriptor {
                 IssuedAt = DateTime.Now,                
-                Expires = DateTime.Now.AddMinutes(5),
+                Expires = DateTime.Now.AddMinutes(30),
                 TokenType = "JWT",
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
                 Claims = new Dictionary<string, object> {
@@ -76,7 +76,7 @@ namespace IoTDevicesMonitor.Controllers {
 
         [HttpPost("admin-token")]
         public IActionResult CreateAdminToken(AdminModel account) {
-            var adminAccount = dbContext.AdminAccount.Where(e => e.Admin == account.Admin).FirstOrDefault();
+            var adminAccount = dbContext.AdminAccounts.Where(e => e.Admin == account.Admin).FirstOrDefault();
             if(adminAccount == null || adminAccount.HPassword != account.Password) {
                 return BadRequest(new {error = "Wrong account or password"});
             }

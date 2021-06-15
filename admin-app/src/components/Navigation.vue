@@ -3,7 +3,7 @@
       router=true
       class="el-menu-vertical">
       <div class="for-fun">
-        <i class="material-icons" style="font-size: 169px">account_box</i>
+        <i class="material-icons" style="font-size: 130px">account_box</i>
         <h2>ADMIN</h2>
       </div>
       <el-menu-item index="/admin-app/home" class="option">

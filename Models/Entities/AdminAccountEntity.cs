@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IoTDevicesMonitor.Data.Entities {
-    public class AdminAccount {
+namespace IoTDevicesMonitor.Models.Entities {
+    public class AdminAccountEntity {
         [Key]
         public string Admin { get; set; }
         [Required]

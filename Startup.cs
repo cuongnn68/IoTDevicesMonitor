@@ -56,6 +56,7 @@ namespace IoTDevicesMonitor
             services.AddSingleton<DeviceState>();
             services.AddSignalR();
             services.AddScoped<JwtServices>();
+            services.AddScoped<UserManager>();
             
             services.AddSpaStaticFiles(options => {
                 options.RootPath = "./admin-app/dist";

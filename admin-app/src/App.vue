@@ -42,4 +42,15 @@ body {
   min-width: 200px;
 }
 
+.my-box {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+  border-radius: 4px;
+}
+
+.top-20 {
+  margin-top: 20px;
+}
+.top-10 {
+  margin-top: 10px;
+}
 </style>

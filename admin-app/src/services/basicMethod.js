@@ -10,6 +10,7 @@ function get(/** @type {string} */url, data) {
     if(keys.length > 0) {
       url = url + "?"
       keys.forEach((key) => {
+            if(data[key] !== null)
               url += key + "=" + data[key] + "&";
           });
       url = url.slice(0, url.length-1);

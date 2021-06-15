@@ -2,15 +2,17 @@
 using IoTDevicesMonitor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace IoTDevicesMonitor.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210614090345_AddUserEDeviceE")]
+    partial class AddUserEDeviceE
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +49,7 @@ namespace IoTDevicesMonitor.Migrations
 
                     b.HasKey("Admin");
 
-                    b.ToTable("AdminAccounts");
+                    b.ToTable("AdminAccount");
                 });
 
             modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.DeviceEntity", b =>
@@ -61,9 +63,6 @@ namespace IoTDevicesMonitor.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("HaveHumidityModule")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("HaveLightModule")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("HavePHModule")
@@ -80,7 +79,7 @@ namespace IoTDevicesMonitor.Migrations
 
                     b.HasIndex("Username");
 
-                    b.ToTable("Devices");
+                    b.ToTable("DeviceEntity");
                 });
 
             modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.UserEntity", b =>
@@ -103,7 +102,7 @@ namespace IoTDevicesMonitor.Migrations
 
                     b.HasKey("Username");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.DeviceEntity", b =>
