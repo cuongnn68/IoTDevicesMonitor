@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using IoTDevicesMonitor.Models.Entities;
 using IoTDevicesMonitor.Utils;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IoTDevicesMonitor.Services {
@@ -27,6 +28,19 @@ namespace IoTDevicesMonitor.Services {
             var handle = new JwtSecurityTokenHandler();
             var token = handle.CreateJwtSecurityToken(descriptor);
             return handle.WriteToken(token);
+        }
+
+        public string CreateUserToken(UserEntity user) {
+            var descriptor = new SecurityTokenDescriptor {
+                IssuedAt = DateTime.Now,
+                Expires = DateTime.Now.AddMinutes(30),
+                TokenType = "JWT",
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
+                Claims = new Dictionary<string, object> {
+                    {"username", user.Username}
+                }
+            };
+            return CreateToken(descriptor);
         }
     }
 }

@@ -27,53 +27,6 @@ namespace IoTDevicesMonitor.Controllers {
             this.jwtServices = jwtServices;
         }
 
-        [HttpGet("test1")]
-        public IActionResult Test1 () {
-            return Ok(new {mess="test1"});
-        }
-        
-        [HttpGet("test2")]
-        [Authorize]
-        public IActionResult Test2 () {
-            return Ok(new {mess="passed authentication"});
-        }
-
-        [HttpGet("test3")]
-        [Authorize(Policy = "Yomama")]
-        public IActionResult Test3() {
-            return Ok(new {mess="passed authorization"});
-        }
-
-        [HttpGet("token-test")]
-        public IActionResult GetTokenTest () {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalConstains.TestKey));
-            var descriptor = new SecurityTokenDescriptor {
-                IssuedAt = DateTime.Now,                
-                Expires = DateTime.Now.AddMinutes(5),
-                // TokenType = "JWT",
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
-            };
-            var handle = new JwtSecurityTokenHandler();
-            var token = handle.CreateJwtSecurityToken(descriptor);
-            return Ok(new {token = handle.WriteToken(token)});
-        }
-        [HttpGet("token-test-with-claim")]
-        public IActionResult GetTokenTestWithClaim () {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(GlobalConstains.TestKey));
-            var descriptor = new SecurityTokenDescriptor {
-                IssuedAt = DateTime.Now,                
-                Expires = DateTime.Now.AddMinutes(30),
-                TokenType = "JWT",
-                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
-                Claims = new Dictionary<string, object> {
-                    {"Mama", "Just kill a man"},
-                }
-            };
-            var handle = new JwtSecurityTokenHandler();
-            var token = handle.CreateJwtSecurityToken(descriptor);
-            return Ok(new {token = handle.WriteToken(token)});
-        }
-
         [HttpPost("admin-token")]
         public IActionResult CreateAdminToken(AdminModel account) {
             var adminAccount = dbContext.AdminAccounts.Where(e => e.Admin == account.Admin).FirstOrDefault();
@@ -83,23 +36,26 @@ namespace IoTDevicesMonitor.Controllers {
             return Ok(new {adminToken = jwtServices.CreateAdminToken(adminAccount)});    
         }
 
-        [HttpGet("admin-token/authorization")]
+        [HttpGet("admin-token")]
         [Authorize(Policy = "Admin")]
         public IActionResult CheckAdminToken() {
-            return Ok();
+            return Ok(new {token = HttpContext.Request.Headers["Authorization"].ToString().Split(" ").Last()});
         }
 
-
-        [HttpPost("token")] // TODO this
-        public IActionResult Token(string username, string password) {
-            return Ok(new {yo="mama"});
+        [HttpPost("user-token")]
+        public IActionResult CreateUserToken(UserLoginModel userLogin) {
+            var user = dbContext.Users.FirstOrDefault(u => u.Username == userLogin.Username);
+            if(user == null || (user.HPassword != userLogin.Password)) 
+                return BadRequest(new {error = "Wrong username or password"});
+            return Ok(new {userToken = jwtServices.CreateUserToken(user)});
         }
 
-        [HttpPost("validate")] // TODO this
-        [Authorize]
-        public IActionResult Validate(string token) {
-            return Ok(new {uhm="ok"});
+        [HttpGet("user-token")]
+        [Authorize(Policy = "User")]
+        public IActionResult CheckUsertoken() {
+            return Ok(new {userToken = HttpContext.Request.Headers["Authorization"].ToString().Split(" ").Last()});
         }
+
     }
 
 }

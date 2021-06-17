@@ -5,7 +5,7 @@ export function getAdminToken(admin, password) {
 }
 
 export function checkLogin() {
-  restApi.get("/api/auth/admin-token/authorization").then(
+  restApi.get("/api/auth/admin-token").then(
     respones => {
       return respones.ok;
     }

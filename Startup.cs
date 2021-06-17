@@ -78,11 +78,11 @@ namespace IoTDevicesMonitor
                     };
                 });
             services.AddAuthorization(option => {
-                option.AddPolicy("Yomama", builder => {
-                    builder.RequireClaim("Mama");
-                });
                 option.AddPolicy("Admin", builder => {
                     builder.RequireClaim("admin");
+                });
+                option.AddPolicy("User", builder => {
+                    builder.RequireClaim("username");
                 });
             });
 
