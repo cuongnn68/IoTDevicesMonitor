@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IoTDevicesMonitor.Utils;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using System.Reflection;
 
 namespace IoTDevicesMonitor
 {
@@ -66,7 +69,7 @@ namespace IoTDevicesMonitor
                     SecurityKey key = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(GlobalConstains.TestKey)
                     );
-                    options.TokenValidationParameters = new TokenValidationParameters{
+                    options.TokenValidationParameters = new TokenValidationParameters {
                         // TODO ????
                         ClockSkew = new TimeSpan(0, 0, 1),
                         ValidateIssuer = false,
@@ -125,6 +128,24 @@ namespace IoTDevicesMonitor
             app.UseSpa(config => {
                 config.Options.SourcePath = "admin-app/dist";
             });
+            // app.Map("/admin-app", config => {
+            //     config.UseSpa(configSPA => {
+            //         configSPA.Options.SourcePath = "admin-app/dist";
+            //         // configSPA.Options.DefaultPageStaticFileOptions = new StaticFileOptions() {
+            //         //     FileProvider =
+            //         //         new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "/admin-app/dist"))
+            //         // };
+            //     });
+            // });
+            // app.Map("/user-app", config => {
+            //     config.UseSpa(configSPA => {
+            //         configSPA.Options.SourcePath = "admin-app/dist/user-app";
+            //         configSPA.Options.DefaultPageStaticFileOptions = new StaticFileOptions() {
+            //             FileProvider =
+            //                 new PhysicalFileProvider("./admin-app/dist/user-app")
+            //         };
+            //     });
+            // });
         }
 
         private string GetConnectionString() {

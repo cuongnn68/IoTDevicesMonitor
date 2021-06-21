@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,5 +17,10 @@ namespace IoTDevicesMonitor.Models.Entities {
         public string Username { get; set; }
         [ForeignKey("Username")]
         public UserEntity User { get; set; }
+        public LightModuleEntity LightModule { get; set; }
+        public TemperatureModuleEntity TempModule { get; set; }
+        public HumiModuleEntity HumiModule { get; set; }
+        public ICollection<TempRecordEntity> TempRecords { get; set; }
+        public ICollection<HumiRecordEntity> HumiRecords { get; set; }
     }
 }

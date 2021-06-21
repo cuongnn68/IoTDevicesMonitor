@@ -86,7 +86,9 @@ namespace IoTDevicesMonitor.Services {
                 error = "User not exist";
                 return false;
             }
-            dbContext.Devices.Add(newDevice.ToDeviceEntity(username));
+            var newDeviceDB = newDevice.ToDeviceEntity(username);
+            
+            dbContext.Devices.AddRange(newDeviceDB);
             dbContext.SaveChanges();
             error = "";
             return true;

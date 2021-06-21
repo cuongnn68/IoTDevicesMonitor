@@ -26,6 +26,19 @@ namespace IoTDevicesMonitor.Utils {
                 HaveTempModule = d.HasTemp,
                 HaveHumidityModule = d.HasHumi,
                 HavePHModule = d.HasPH,
+                LightModule = d.HasLight ? new LightModuleEntity{
+                    // Device = newDeviceDB,
+                    // DeviceId = newDeviceDB.DeviceId,
+                    Auto = false,
+                    State = false,
+                } : null,
+                TempModule = d.HasLight ? new TemperatureModuleEntity {
+                    Value = 99,
+                } : null,
+                HumiModule = d.HasHumi ? new HumiModuleEntity {
+                    Auto = false,
+                    Value = 99,
+                } : null,
             }).ToList();
         }
 
@@ -56,6 +69,67 @@ namespace IoTDevicesMonitor.Utils {
                 HaveTempModule = newDevice.HasTemp,
                 HaveHumidityModule = newDevice.HasHumi,
                 HavePHModule = newDevice.HasPH,
+                LightModule = newDevice.HasLight ? new LightModuleEntity{
+                    // Device = newDeviceDB,
+                    // DeviceId = newDeviceDB.DeviceId,
+                    Auto = false,
+                    State = false,
+                } : null,
+                TempModule = newDevice.HasLight ? new TemperatureModuleEntity {
+                    Value = 99,
+                } : null,
+                HumiModule = newDevice.HasHumi ? new HumiModuleEntity {
+                    Auto = false,
+                    Value = 99,
+                } : null,
+            };
+
+            // if(newDevice.HasLight) {
+            //     newDeviceDB.LightModule = new LightModuleEntity{
+            //         Device = newDeviceDB,
+            //         DeviceId = newDeviceDB.DeviceId,
+            //         Auto = false,
+            //         State = false,
+            //     };
+            // }
+            // if(newDeviceDB.HaveTempModule) {
+            //     newDeviceDB.TempModule = new TemperatureModuleEntity{
+            //         Device = newDeviceDB,
+            //         DeviceId = newDeviceDB.DeviceId,
+            //         Value = 99,
+            //     };
+            // }
+            // if(newDeviceDB.HaveHumidityModule) {
+            //     newDeviceDB.HumiModule = new HumiModuleEntity {
+            //         Device = newDeviceDB,
+            //         DeviceId = newDeviceDB.DeviceId,
+            //         Auto = false,
+            //         Value = 99,
+            //     };
+            // }
+        }
+
+        static public DeviceInfoModel ToDeviceInfoResponse(this DeviceEntity device) {
+            if(device == null) return null;
+            // var deviceResponse = new DeviceInfoModel();
+            // deviceResponse.Id = device.DeviceId;
+            // deviceResponse.Name = device.DeviceName;
+            // deviceResponse.HasLightModule = device.HaveLightModule;
+            // deviceResponse.HasHumiModule = device.HaveHumidityModule;
+            // deviceResponse.HasTempModule = device.HaveTempModule;
+            // deviceResponse.LightState = device?.LightModule?.State;
+            // deviceResponse.TempValue = device?.TempModule?.Value;
+            // deviceResponse.HumiValue = device?.HumiModule?.Value;
+            // return deviceResponse;
+            return new DeviceInfoModel {
+                Id = device.DeviceId,
+                Name = device.DeviceName,
+                HasLightModule = device.HaveLightModule,
+                HasHumiModule = device.HaveHumidityModule,
+                HasTempModule = device.HaveTempModule,
+                LightState = device.LightModule?.State,
+                TempValue = device.TempModule?.Value,
+                HumiValue = device.HumiModule?.Value,
             };
         }
     }
