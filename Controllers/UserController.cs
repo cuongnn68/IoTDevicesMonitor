@@ -88,6 +88,23 @@ namespace IoTDevicesMonitor.Controllers {
             });
         }
 
+        [HttpGet("{username}/device/{deviceId}/light-module")]
+        public IActionResult GetLightModule(string username, int deviceId) {
+            var device = dbContext.Devices
+                                .Include(d => d.LightModule)
+                                .FirstOrDefault(d => d.Username == username && d.DeviceId == deviceId);
+            if(device == null) return BadRequest(new {error = "user or device not exist"});
+            return Ok(new {
+                lightState = device.LightModule.State,
+                lightOnOption = device.LightModule.TimeOnOption,
+                lightOffOption = device.LightModule.TimeOffOption,
+                timeOn = device.LightModule?.TimeOn.ToString("HH:mm"),
+                timeOff = device.LightModule?.TimeOff.ToString("HH:mm"),
+                auto = device.LightModule.Auto,
+            });
+
+        }
+
         [HttpGet("{username}/device/{deviceId}/temp")] 
         public IActionResult GetTemp(string username, int deviceId) {
             // TODO

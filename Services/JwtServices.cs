@@ -33,7 +33,7 @@ namespace IoTDevicesMonitor.Services {
         public string CreateUserToken(UserEntity user) {
             var descriptor = new SecurityTokenDescriptor {
                 IssuedAt = DateTime.Now,
-                Expires = DateTime.Now.AddMinutes(30),
+                Expires = DateTime.Now.AddDays(30),
                 TokenType = "JWT",
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256),
                 Claims = new Dictionary<string, object> {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,13 +28,13 @@ namespace IoTDevicesMonitor.Utils {
                 HaveHumidityModule = d.HasHumi,
                 HavePHModule = d.HasPH,
                 LightModule = d.HasLight ? new LightModuleEntity{
-                    // Device = newDeviceDB,
-                    // DeviceId = newDeviceDB.DeviceId,
                     Auto = false,
                     State = false,
                 } : null,
-                TempModule = d.HasLight ? new TemperatureModuleEntity {
+                TempModule = d.HasTemp ? new TemperatureModuleEntity {
                     Value = 99,
+                    UpperAlertOption = false,
+                    LowerAlertOption = false,
                 } : null,
                 HumiModule = d.HasHumi ? new HumiModuleEntity {
                     Auto = false,
@@ -70,12 +71,12 @@ namespace IoTDevicesMonitor.Utils {
                 HaveHumidityModule = newDevice.HasHumi,
                 HavePHModule = newDevice.HasPH,
                 LightModule = newDevice.HasLight ? new LightModuleEntity{
-                    // Device = newDeviceDB,
-                    // DeviceId = newDeviceDB.DeviceId,
                     Auto = false,
                     State = false,
+                    TimeOnOption = false,
+                    TimeOffOption = false,
                 } : null,
-                TempModule = newDevice.HasLight ? new TemperatureModuleEntity {
+                TempModule = newDevice.HasTemp ? new TemperatureModuleEntity {
                     Value = 99,
                 } : null,
                 HumiModule = newDevice.HasHumi ? new HumiModuleEntity {
@@ -83,54 +84,38 @@ namespace IoTDevicesMonitor.Utils {
                     Value = 99,
                 } : null,
             };
-
-            // if(newDevice.HasLight) {
-            //     newDeviceDB.LightModule = new LightModuleEntity{
-            //         Device = newDeviceDB,
-            //         DeviceId = newDeviceDB.DeviceId,
-            //         Auto = false,
-            //         State = false,
-            //     };
-            // }
-            // if(newDeviceDB.HaveTempModule) {
-            //     newDeviceDB.TempModule = new TemperatureModuleEntity{
-            //         Device = newDeviceDB,
-            //         DeviceId = newDeviceDB.DeviceId,
-            //         Value = 99,
-            //     };
-            // }
-            // if(newDeviceDB.HaveHumidityModule) {
-            //     newDeviceDB.HumiModule = new HumiModuleEntity {
-            //         Device = newDeviceDB,
-            //         DeviceId = newDeviceDB.DeviceId,
-            //         Auto = false,
-            //         Value = 99,
-            //     };
-            // }
         }
 
         static public DeviceInfoModel ToDeviceInfoResponse(this DeviceEntity device) {
             if(device == null) return null;
-            // var deviceResponse = new DeviceInfoModel();
-            // deviceResponse.Id = device.DeviceId;
-            // deviceResponse.Name = device.DeviceName;
-            // deviceResponse.HasLightModule = device.HaveLightModule;
-            // deviceResponse.HasHumiModule = device.HaveHumidityModule;
-            // deviceResponse.HasTempModule = device.HaveTempModule;
-            // deviceResponse.LightState = device?.LightModule?.State;
-            // deviceResponse.TempValue = device?.TempModule?.Value;
-            // deviceResponse.HumiValue = device?.HumiModule?.Value;
-            // return deviceResponse;
             return new DeviceInfoModel {
                 Id = device.DeviceId,
                 Name = device.DeviceName,
                 HasLightModule = device.HaveLightModule,
                 HasHumiModule = device.HaveHumidityModule,
                 HasTempModule = device.HaveTempModule,
-                LightState = device.LightModule?.State,
+                LightState = (device.HaveLightModule ? device.LightModule.State : false),
                 TempValue = device.TempModule?.Value,
                 HumiValue = device.HumiModule?.Value,
             };
         }
+
+        static public TempRecordEntity ToTempRecordEntity(this NewRecordModel newRecord, int deviceId) {
+            if(newRecord == null) return null;
+            return new TempRecordEntity {
+                DeviceId = deviceId,
+                Value = newRecord.Value,
+                Time = (newRecord.Time == "auto" ? DateTime.Now : DateTime.ParseExact(newRecord.Time, "HH:mm", null)),
+            };
+        }
+        static public HumiRecordEntity ToHumiRecordEntity(this NewRecordModel newRecord, int deviceId) {
+            if(newRecord == null) return null;
+            return new HumiRecordEntity {
+                DeviceId = deviceId,
+                Value = newRecord.Value,
+                Time = (newRecord.Time == "auto" ? DateTime.Now : DateTime.ParseExact(newRecord.Time, "HH:mm", null)),
+            };
+        }
+        
     }
 }

@@ -3,15 +3,17 @@ using System;
 using IoTDevicesMonitor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace IoTDevicesMonitor.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210621042406_AddTimeOnOffOptions")]
+    partial class AddTimeOnOffOptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,14 +173,8 @@ namespace IoTDevicesMonitor.Migrations
                     b.Property<int>("DeviceId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("LowerAlertOption")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("Lowerbound")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("UpperAlertOption")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Upperbound")
                         .HasColumnType("integer");

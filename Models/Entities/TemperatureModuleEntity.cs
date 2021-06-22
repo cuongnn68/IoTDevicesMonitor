@@ -9,6 +9,8 @@ namespace IoTDevicesMonitor.Models.Entities {
         public int Value { get; set; }
         public int Upperbound { get; set; }
         public int Lowerbound { get; set; }
+        public bool UpperAlertOption { get; set; }
+        public bool LowerAlertOption { get; set; }
 
         public DeviceEntity Device { get; set; }
     }
