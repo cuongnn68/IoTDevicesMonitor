@@ -3,15 +3,17 @@ using System;
 using IoTDevicesMonitor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace IoTDevicesMonitor.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210623084948_AddOptionTempModule")]
+    partial class AddOptionTempModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,22 +51,6 @@ namespace IoTDevicesMonitor.Migrations
                     b.HasKey("Admin");
 
                     b.ToTable("AdminAccounts");
-                });
-
-            modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.AlertEntity", b =>
-                {
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("TimeAlert")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
-
-                    b.HasKey("DeviceId", "TimeAlert");
-
-                    b.ToTable("Alerts");
                 });
 
             modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.DeviceEntity", b =>
@@ -230,17 +216,6 @@ namespace IoTDevicesMonitor.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.AlertEntity", b =>
-                {
-                    b.HasOne("IoTDevicesMonitor.Models.Entities.DeviceEntity", "Device")
-                        .WithMany("Alerts")
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
-                });
-
             modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.DeviceEntity", b =>
                 {
                     b.HasOne("IoTDevicesMonitor.Models.Entities.UserEntity", "User")
@@ -309,8 +284,6 @@ namespace IoTDevicesMonitor.Migrations
 
             modelBuilder.Entity("IoTDevicesMonitor.Models.Entities.DeviceEntity", b =>
                 {
-                    b.Navigation("Alerts");
-
                     b.Navigation("HumiModule");
 
                     b.Navigation("HumiRecords");

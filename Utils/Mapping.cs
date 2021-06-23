@@ -78,6 +78,8 @@ namespace IoTDevicesMonitor.Utils {
                 } : null,
                 TempModule = newDevice.HasTemp ? new TemperatureModuleEntity {
                     Value = 99,
+                    UpperAlertOption = false,
+                    LowerAlertOption = false,
                 } : null,
                 HumiModule = newDevice.HasHumi ? new HumiModuleEntity {
                     Auto = false,

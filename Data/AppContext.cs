@@ -15,6 +15,7 @@ namespace IoTDevicesMonitor.Data {
         public DbSet<HumiModuleEntity> HumiModules { get; set; }
         public DbSet<TempRecordEntity> TempRecords { get; set; }
         public DbSet<HumiRecordEntity> HumiRecords { get; set; }
+        public DbSet<AlertEntity> Alerts { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
@@ -30,6 +31,9 @@ namespace IoTDevicesMonitor.Data {
             //             .HasForeignKey<HumiModuleEntity>(hm => hm.DeviceId);
             modelBuilder.Entity<TempRecordEntity>().HasKey(e => new {e.DeviceId, e.Time});
             modelBuilder.Entity<HumiRecordEntity>().HasKey(e => new {e.DeviceId, e.Time});
+            modelBuilder.Entity<AlertEntity>().HasKey(e => new{e.DeviceId, e.TimeAlert});
+
+            // ko dung nua
             modelBuilder.Entity<Base64FileEntity>().HasKey(e => new {e.Name, e.Folder});
             /*
             .HasAlternateKey(System.Linq.Expressions.Expression<System.Func<Base64FileEntity, object>> keyExpression) (+ 2 overloads)

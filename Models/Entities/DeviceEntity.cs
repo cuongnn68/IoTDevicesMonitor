@@ -22,5 +22,6 @@ namespace IoTDevicesMonitor.Models.Entities {
         public HumiModuleEntity HumiModule { get; set; }
         public ICollection<TempRecordEntity> TempRecords { get; set; }
         public ICollection<HumiRecordEntity> HumiRecords { get; set; }
+        public ICollection<AlertEntity> Alerts { get; set; }
     }
 }
