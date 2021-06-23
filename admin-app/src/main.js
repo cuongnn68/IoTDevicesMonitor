@@ -11,7 +11,7 @@ console.log(process.env.NODE_ENV);
 if(process.env.NODE_ENV === "development") {
   localStorage.setItem("domain", "http://localhost:5000");
 } else {
-  localStorage.setItem("domain", "https://localhost:5001"); // TODO change to domain to heroku
+  localStorage.setItem("domain", "https://iot-app-nnc.herokuapp.com"); // TODO change to domain to heroku
 }
 document.title = "Admin app";
 
