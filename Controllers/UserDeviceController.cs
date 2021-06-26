@@ -329,7 +329,27 @@ namespace IoTDevicesMonitor.Controllers {
                     upperBoundSoilHumi = 100,
                 });
             if(device.HaveTempModule) {
-                dbContext.TempModules.FirstOrDefault(m => m.DeviceId == deviceId).Value = newState.Temp;
+
+                var tempModule = dbContext.TempModules.FirstOrDefault(m => m.DeviceId == deviceId);
+                if(tempModule.UpperAlertOption 
+                && tempModule.Value < tempModule.Upperbound 
+                && newState.Temp > tempModule.Upperbound) {
+                    dbContext.Alerts.Add(new AlertEntity{
+                        DeviceId = deviceId,
+                        Content = "Nhiệt độ vướt quá mức cảnh báo!",
+                        TimeAlert = DateTime.Now,
+                    });
+                }
+                if(tempModule.LowerAlertOption 
+                && tempModule.Value > tempModule.Lowerbound 
+                && newState.Temp < tempModule.Lowerbound) {
+                    dbContext.Alerts.Add(new AlertEntity{
+                        DeviceId = deviceId,
+                        Content = "Nhiệt độ xuống dưới mức cảnh báo!",
+                        TimeAlert = DateTime.Now,
+                    });
+                }
+                tempModule.Value = newState.Temp;
                 dbContext.TempRecords.Add(new TempRecordEntity{
                     DeviceId = deviceId,
                     Value = newState.Temp,

@@ -58,33 +58,43 @@ namespace IoTDevicesMonitor.Controllers {
         [HttpGet("{username}/notification/")]
         public IActionResult GetAlert(string username) {
             // TODO: get alert from database
+            var user = dbContext.Users.Include(u => u.Devices)
+                    .ThenInclude(d => d.Alerts)
+                    .FirstOrDefault(u => u.Username == username);
+            if(user == null)
+                return Ok(new {
+                    notification = new [] {
+                        new AlertModel {
+                            Content = "Test notification list", 
+                            Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        },
+                        new AlertModel {
+                            Content = "Xuông dưới mức nhiệt độ quy định", 
+                            Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        },
+                        new AlertModel {
+                            Content = "Xuông dưới mức độ ẩm quy định", 
+                            Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        },
+                        new AlertModel {
+                            Content = "Xuông dưới mức độ ẩm quy định", 
+                            Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        },
+                        new AlertModel {
+                            Content = "Xuông dưới mức độ ẩm quy định", 
+                            Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        },
+                        new AlertModel {
+                            Content = "Vượt quá mức nhiệt độ quy định", 
+                            Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        },
+                    }
+                });
             return Ok(new {
-                notification = new [] {
-                    new AlertModel {
-                        Content = "Xuông dưới mức độ ẩm quy định", 
-                        Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
-                    },
-                    new AlertModel {
-                        Content = "Xuông dưới mức nhiệt độ quy định", 
-                        Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
-                    },
-                    new AlertModel {
-                        Content = "Xuông dưới mức độ ẩm quy định", 
-                        Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
-                    },
-                    new AlertModel {
-                        Content = "Xuông dưới mức độ ẩm quy định", 
-                        Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
-                    },
-                    new AlertModel {
-                        Content = "Xuông dưới mức độ ẩm quy định", 
-                        Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
-                    },
-                    new AlertModel {
-                        Content = "Vượt quá mức nhiệt độ quy định", 
-                        Time = DateTime.Now.ToString("dd/MM/yyyy HH:mm")
-                    },
-                }
+                notification = user.Devices.SelectMany(d => d.Alerts).Select(a => new AlertModel{
+                    Content = a.Content,
+                    Time = a.TimeAlert.ToString("dd/MM/yyyy HH:mm"),
+                }),
             });
         }
 
