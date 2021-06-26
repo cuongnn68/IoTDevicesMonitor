@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using IoTDevicesMonitor.Data;
+using IoTDevicesMonitor.Models.Entities;
 using IoTDevicesMonitor.Models.Requests;
 using IoTDevicesMonitor.Models.Respones;
 using IoTDevicesMonitor.Utils;
@@ -299,5 +300,58 @@ namespace IoTDevicesMonitor.Controllers {
             return Ok();
         }
 
+        [AllowAnonymous]
+        [HttpPost("{deviceId}/state")]
+        public IActionResult NewRecord([FromRoute]int deviceId, [FromBody] NewStateModel newState) {
+            var header = HttpContext.Request.Headers;
+            if(header.ContainsKey("Authorization"))
+                Console.WriteLine($@"Authorization: {header["Authorization"]}");
+            if(header.ContainsKey("Content-Type"))
+                Console.WriteLine($@"Content-Type: {header["Content-type"]}");
+            if(header.ContainsKey("Accept"))
+                Console.WriteLine($@"Accept: {header["Accept"]}");
+            Console.WriteLine("requtested ------------------");
+            Console.WriteLine($"temp: {newState.Temp}");
+            Console.WriteLine($"time temp: {newState.TimeTemp}");
+            Console.WriteLine($"humi: {newState.Humi}");
+            Console.WriteLine($"time humi: {newState.TimeHumi}");
+            var device = dbContext.Devices
+                            .Include(d => d.LightModule)
+                            .Include(d => d.TempModule)
+                            .Include(d => d.HumiModule)
+                            .FirstOrDefault(d => d.DeviceId == deviceId);
+            if(device == null)
+                return Ok(new {
+                    autoLight = false,
+                    lightState = false,
+                    autoPump = false,
+                    lowerBoundSoilHumi = 100,
+                    upperBoundSoilHumi = 100,
+                });
+            if(device.HaveTempModule) {
+                dbContext.TempModules.FirstOrDefault(m => m.DeviceId == deviceId).Value = newState.Temp;
+                dbContext.TempRecords.Add(new TempRecordEntity{
+                    DeviceId = deviceId,
+                    Value = newState.Temp,
+                    Time = (newState.TimeTemp == "auto" ? DateTime.Now : DateTime.Parse(newState.TimeTemp)) 
+                });
+            }
+            if(device.HaveHumidityModule) {
+                dbContext.HumiModules.FirstOrDefault(m => m.DeviceId == deviceId).Value = newState.Humi;
+                dbContext.HumiRecords.Add(new HumiRecordEntity{
+                    DeviceId = deviceId,
+                    Value = newState.Humi,
+                    Time = (newState.TimeHumi == "auto" ? DateTime.Now : DateTime.Parse(newState.TimeHumi)),
+                });
+            }
+            dbContext.SaveChanges();
+            return Ok(new {
+                autoLight = (device.HaveLightModule) ? device.LightModule.Auto : false,
+                lightState = (device.HaveLightModule) ? device.LightModule.State : false,
+                autoPump = (device.HaveHumidityModule) ? device.HumiModule.Auto : false,
+                lowerBoundSoilHumi = (device.HaveHumidityModule) ? device.HumiModule.Lowerbound : 100,
+                upperBoundSoilHumi = (device.HaveHumidityModule) ? device.HumiModule.Upperbound : 100,
+            });
+        }
     }
 }
